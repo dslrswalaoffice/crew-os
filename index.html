@@ -408,7 +408,7 @@ const Store = {
 /* ===================== API ===================== */
 let SESSION = null;
 const API = {
-  on(){ return !!(CONFIG.API_URL && CONFIG.API_URL.indexOf('http')===0); },
+  on(){ return !!(CONFIG.API_URL && CONFIG.API_URL.indexOf('https://script.google.com/macros/s/AKfycbwvtq_Yp_vLmL-ACqj7EE9kyJ_rDeY_Z3IAtivSnexbQcZwOQzrtGjNjSVQ5uORFQZY_Q/exec')===0); },
   async call(payload){
     const r = await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     return r.json();
