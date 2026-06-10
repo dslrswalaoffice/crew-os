@@ -391,7 +391,8 @@ table.data tr:hover td{background:var(--surface-2)}
 /* ===================== CONFIG ===================== */
 const CONFIG = {
   // Paste the Apps Script Web App URL (ends in /exec). Blank = offline demo mode.
-  API_URL: "",
+  API_URL: "https://script.google.com/macros/s/AKfycbwvtq_Yp_vLmL-ACqj7EE9kyJ_rDeY_Z3IAtivSnexbQcZwOQzrtGjNjSVQ5uORFQZY_Q/exec
+",
   POLL_SECONDS: 20,
   DEMO_PIN: "4729"   // used ONLY in offline demo mode (no API_URL). Live PIN lives in Apps Script.
 };
@@ -408,7 +409,7 @@ const Store = {
 /* ===================== API ===================== */
 let SESSION = null;
 const API = {
-  on(){ return !!(CONFIG.API_URL && CONFIG.API_URL.indexOf('https://script.google.com/macros/s/AKfycbwvtq_Yp_vLmL-ACqj7EE9kyJ_rDeY_Z3IAtivSnexbQcZwOQzrtGjNjSVQ5uORFQZY_Q/exec')===0); },
+  on(){ return !!(CONFIG.API_URL && CONFIG.API_URL.indexOf('http')===0); },
   async call(payload){
     const r = await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     return r.json();
