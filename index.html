@@ -765,46 +765,56 @@ function DEMO_SKILLS(){return [
   {id:'sk_drone_pilot',name:'Drone Pilot',price:7000}
 ];}
 function DEMO_DATA(){
-  const day=86400000, sodN=sod(Date.now()), mon=weekStart(Date.now());
-  const at=(d,h)=>sod(mon+d*day)+ (h||9)*3600000;
-  const crew=[
-    {id:'dc1',code:'SS',name:'Shoaib Shaikh',type:'full_time',city:'Vadodara',phone:'+919000000001',email:'',skills:[{name:'DOP',price:12000},{name:'Camera Op',price:6000}],tags:['Lead'],certs:[],rate:{type:'daily',amount:0},priority:1,status:'active',color:'#252359',notes:'Most senior operator — handles vision-critical roles.',notes_at:sodN-3*day},
-    {id:'dc2',code:'RP',name:'Ruhan Patel',type:'full_time',city:'Vadodara',phone:'+919000000002',email:'',skills:[{name:'Camera Op',price:5500},{name:'Editor',price:4000}],tags:[],certs:[],rate:{type:'daily',amount:0},priority:2,status:'active',color:'#2563eb',notes:'',notes_at:null},
-    {id:'dc3',code:'IP',name:'Irfan Patel',type:'full_time',city:'Vadodara',phone:'+919000000003',email:'',skills:[{name:'Audio Engineer',price:6000},{name:'Camera Op',price:5500}],tags:[],certs:[],rate:{type:'daily',amount:0},priority:3,status:'active',color:'#7c3aed',notes:'',notes_at:null},
-    {id:'dc4',code:'DS',name:'Dhruv Soni',type:'freelancer',city:'Ahmedabad',phone:'+919000000004',email:'',skills:[{name:'DOP',price:13000},{name:'Gaffer',price:5500}],tags:['Vendor'],certs:[{name:'DGCA Drone Licence',expiry:sodN+22*day}],rate:{type:'daily',amount:0},priority:5,status:'active',color:'#0891b2',notes:'Ahmedabad-based. Drone certified.',notes_at:sodN-10*day},
-    {id:'dc5',code:'GP',name:'Gaurang Patel',type:'freelancer',city:'Ahmedabad',phone:'+919000000005',email:'',skills:[{name:'Lighting Tech',price:5500},{name:'Gaffer',price:5000}],tags:['Vendor','Lighting'],certs:[],rate:{type:'daily',amount:0},priority:6,status:'active',color:'#d97706',notes:'Uniq Camera Rental — lighting source for AMD.',notes_at:null},
-    {id:'dc6',code:'AM',name:'Aakash Mehta',type:'freelancer',city:'Surat',phone:'+919000000006',email:'',skills:[{name:'Photographer',price:9000}],tags:[],certs:[{name:'Liability Insurance',expiry:sodN-4*day}],rate:{type:'daily',amount:0},priority:7,status:'active',color:'#be123c',notes:'',notes_at:null}
-  ];
-  const clients=[
-    {id:'dcl1',name:'Touch Stone Foundation',company:'Touch Stone',contact:'Ankit Bhai',phone:'+919812300000',email:'ankit@touchstone.example',tags:['Concerts'],notes:'Repeat concert client — India Tour legs.',notes_at:sodN-5*day},
-    {id:'dcl2',name:'Beyond Content Studio',company:'Beyond Content',contact:'Priya',phone:'+919812311111',email:'',tags:[],notes:'',notes_at:null}
-  ];
-  const jobs=[
-    {id:'dj1',number:'JOB-2451',title:'Maithili Thakur — Live',client:'Touch Stone Foundation',client_id:'dcl1',client_status:'approved',approval_token:'aptokendemo1',booqable:'#5521',venue:'Praveg, Adalaj',start:at(2,16),end:at(2,23),status:'confirmed',
-      functions:[{id:'df1',role:'DOP',qty:1,price:12000},{id:'df2',role:'Camera Op',qty:3,price:6000},{id:'df3',role:'Vision Mixer',qty:1,price:8000},{id:'df4',role:'Audio Engineer',qty:1,price:6000},{id:'df5',role:'Gaffer',qty:1,price:5000}],
-      call_time:'2:00 PM',nearest_hospital:'Zydus Hospital, SG Highway',weather:'Clear, 31°C',notes:'Load-in from 12pm. Park at gate 3.',internal_notes:'Lighting via Gaurang — keep cost under ₹4.75L.',notes_at:sodN-1*day,internal_notes_at:sodN-1*day,quote_price:250000,quote_cost:160000,tags:['Production','Maithili Tour']},
-    {id:'dj2',number:'JOB-2462',title:'TechCorp AGM — AV',client:'Beyond Content Studio',client_id:'dcl2',client_status:'',approval_token:'',booqable:'#5530',venue:'Courtyard Marriott, Vadodara',start:at(8,9),end:at(8,18),status:'draft',
-      functions:[{id:'df6',role:'Camera Op',qty:2,price:6000},{id:'df7',role:'Vision Mixer',qty:1,price:8000},{id:'df8',role:'Audio Engineer',qty:1,price:6000}],
-      call_time:'',nearest_hospital:'',weather:'',notes:'',internal_notes:'',notes_at:null,internal_notes_at:null,quote_price:null,quote_cost:null,tags:['Corporate']},
-    {id:'dj3',number:'JOB-2470',title:'Sharma Wedding',client:'',client_id:'',client_status:'sent',approval_token:'aptokendemo3',booqable:'#5544',venue:'The Grand Bhagwati, Surat',start:at(5,8),end:at(6,23),status:'confirmed',
-      functions:[{id:'df9',role:'Lead Cinematographer',qty:1,price:10000},{id:'df10',role:'Camera Op',qty:2,price:5000},{id:'df11',role:'Drone Pilot',qty:1,price:7000}],
-      call_time:'8:00 AM',nearest_hospital:'',weather:'',notes:'',internal_notes:'',notes_at:null,internal_notes_at:null,quote_price:180000,quote_cost:120000,tags:['Wedding']}
-  ];
-  const assignments=[
-    {id:'da1',job:'dj1',func:'df1',crew:'dc1',status:'confirmed',start:at(2,16),end:at(2,23),cost:12000,sheet_sent_at:sodN-1*day,sheet_status:'confirmed',confirm_token:'cfd1'},
-    {id:'da2',job:'dj1',func:'df2',crew:'dc4',status:'confirmed',start:at(2,16),end:at(2,23),cost:13000,sheet_sent_at:sodN-1*day,sheet_status:'sent',confirm_token:'cfd2'},
-    {id:'da3',job:'dj1',func:'df2',crew:'dc2',status:'confirmed',start:at(2,16),end:at(2,23),cost:5500,sheet_sent_at:sodN-1*day,sheet_status:'confirmed',confirm_token:'cfd3'},
-    {id:'da4',job:'dj1',func:'df4',crew:'dc3',status:'confirmed',start:at(2,16),end:at(2,23),cost:6000,sheet_sent_at:sodN-1*day,sheet_status:'confirmed',confirm_token:'cfd4'},
-    {id:'da5',job:'dj1',func:'df5',crew:'dc5',status:'confirmed',start:at(2,16),end:at(2,23),cost:5000,sheet_sent_at:sodN-1*day,sheet_status:'sent',confirm_token:'cfd5'},
-    {id:'da6',job:'dj3',func:'df11',crew:'dc4',status:'invited',start:at(5,8),end:at(6,23),cost:7000,sheet_sent_at:null,sheet_status:'',confirm_token:''}
-  ];
-  const avail=[{id:'dv1',crew:'dc6',start:at(3,0),end:at(4,23),state:'leave',note:'Out of town'}];
-  const timesheets=[{id:'dt1',asg:'da1',in:at(2,14),out:at(2,23),brk:60,status:'approved',notes:'',notes_at:null}];
-  const notifs=[
-    {id:'dn1',ch:'client',to:'Touch Stone Foundation',tmpl:'approval',body:'Client approved "Maithili Thakur — Live"',at:sodN-1*day+3600000,status:'approved'},
-    {id:'dn2',ch:'whatsapp',to:'Ruhan Patel',tmpl:'call_sheet',body:'Ruhan confirmed "Maithili Thakur — Live"',at:sodN-1*day+5400000,status:'confirmed'},
-    {id:'dn3',ch:'whatsapp',to:'Dhruv Soni',tmpl:'call_sheet',body:'Call sheet sent to Dhruv',at:sodN-1*day+1800000,status:'sent'}
-  ];
+  const day=86400000, now=Date.now();
+  let _s=987654321; const R=()=>{_s=(_s*1103515245+12345)&0x7fffffff;return _s/0x7fffffff;};
+  const pick=a=>a[Math.floor(R()*a.length)], rint=(lo,hi)=>lo+Math.floor(R()*(hi-lo+1)), chance=p=>R()<p;
+  const FN=['Shoaib','Ruhan','Irfan','Dhruv','Gaurang','Aakash','Riyaz','Kunal','Harsh','Jay','Manav','Parth','Yash','Tej','Vivek','Nikhil','Sahil','Om','Dev','Krish','Arjun','Rahul','Aman','Faisal','Zaid','Kabir','Ishan','Naman','Pranav','Ravi','Sameer','Tarun','Uday','Varun','Chirag','Deep','Hardik','Jignesh','Karan','Laksh'];
+  const LN=['Shaikh','Patel','Soni','Mehta','Ghanchi','Rana','Chauhan','Vora','Jadeja','Solanki','Prajapati','Trivedi','Bhatt','Pandya','Rathod'];
+  const SK=[['DOP',12000],['Camera Op',6000],['Vision Mixer',8000],['Audio Engineer',6000],['Gaffer',5000],['Lighting Tech',5000],['Editor',4000],['Photographer',9000],['Drone Pilot',7000]];
+  const CITY=['Vadodara','Ahmedabad','Surat','Rajkot','Anand','Bharuch'];
+  const COL=['#252359','#2563eb','#be123c','#0f766e','#7c3aed','#b45309','#0369a1','#4d7c0f','#9d174d','#1e3a8a'];
+  const skmap={}; SK.forEach(s=>skmap[s[0]]=s[1]);
+  const crew=[];
+  for(let i=0;i<40;i++){
+    const nm=FN[i]+' '+pick(LN);
+    const code=nm.split(' ').map(w=>w[0]).join('').toUpperCase();
+    const pool=SK.slice(), chosen=[]; const nsk=rint(1,3);
+    for(let k=0;k<nsk;k++){chosen.push(pool.splice(Math.floor(R()*pool.length),1)[0]);}
+    const skills=chosen.map(s=>({name:s[0],price:s[1]+pick([-500,0,500])}));
+    const isDrone=chosen.some(s=>s[0]==='Drone Pilot');
+    const drone=isDrone?{pilot:true,rpc_no:'RP2025'+String(rint(1,99999999)).padStart(8,'0'),rpc_expiry:now+rint(300,3600)*day,endorsement:'Small / VLOS',rpto:'Skyview UAV LLP',model:pick(['DJI Air 3','DJI Mavic 3','DJI Mini 4 Pro']),uin:'UIN'+String(rint(1,999999)).padStart(6,'0'),cls:'Small',weight:pick(['249','595','958'])+' g',ins_no:'POL'+String(rint(1,999999)).padStart(6,'0'),ins_expiry:now+rint(30,400)*day}:{pilot:false};
+    const certs=chance(0.3)?[{name:'First Aid',expiry:now+rint(-30,400)*day}]:[];
+    crew.push({id:'dc'+i,code:code,name:nm,type:pick(['full_time','freelancer','freelancer','freelancer']),city:pick(CITY),phone:'+9197'+String(rint(10000000,99999999)),email:'',skills:skills,tags:[],certs:certs,rate:{type:'daily',amount:0},priority:rint(1,99),status:'active',color:pick(COL),notes:'',notes_at:null,drone:drone});
+  }
+  const COMPS=['Touch Stone Foundation','Praveg Events','Zenith Productions','Blue Ocean Media','Skyline Weddings','Rangmanch Films','Nova Corporate','Silver Screen Co','Utsav Event Managers','Meridian Ads','Crescent Studios','Dhwani Music','Aarambh Films','Vibrant Expo','Kite Media House','Lotus Weddings','Pinnacle Corp','Orbit Productions','Sunrise Events','Milestone Media','Cineworld Baroda','Grand Celebrations','Trine Studios','Aster Corporate','Bespoke Weddings','Momentum Events','Fablewick Films','Radiant Productions','Elan Media','Sahyog Foundation','Peak Ads','Verve Events','Indigo Studios','Nirvana Weddings','Quantum Corp','Bharat Cinema','Prisma Media','Elevate Events','Onyx Productions','Beyond Content'];
+  const clients=COMPS.map((c,i)=>({id:'dcl'+i,name:c,company:c,contact:pick(['Ankit','Raj','Priya','Sanjay','Meera','Vikram','Neha','Imran'])+' '+pick(LN),phone:'+9198'+String(rint(10000000,99999999)),email:'',tags:pick([['production'],['events'],['wedding'],['corporate'],['repeat']]),notes:'',notes_at:null}));
+  const JT=[['Concert',['DOP','Camera Op','Vision Mixer','Audio Engineer','Gaffer']],['Wedding',['Photographer','Camera Op','Drone Pilot']],['Corporate AV',['Camera Op','Vision Mixer','Audio Engineer']],['Film Shoot',['DOP','Camera Op','Gaffer','Lighting Tech']],['Event Coverage',['Camera Op','Photographer']]];
+  const VEN=['Laxmi Vilas Palace','Praveg Adalaj','Grand Bhagwati','Surya Palace','EORC Ground','Navlakhi Ground','Akota Stadium','Sayaji Hotel','Inox Multiplex','Genda Circle'];
+  const NAMES=['Sharma','Patel','Mehta','Nova','Zenith','Rathod','Desai','Annual','Launch','Live','Reception','Summit'];
+  const jobs=[], assignments=[], timesheets=[]; let aid=0, tid=0;
+  for(let j=0;j<200;j++){
+    const jt=pick(JT), past=chance(0.7);
+    const start=past?now-rint(2,360)*day:now+rint(1,60)*day, end=start+pick([1,1,2,3])*day;
+    const status=past?pick(['stopped','stopped','started']):pick(['confirmed','confirmed','draft']);
+    const funcs=jt[1].map((role,ri)=>({id:'f'+ri,role:role,qty:1,price:(skmap[role]||4000)+pick([0,1000,2000])}));
+    const quote=funcs.reduce((s,f)=>s+f.price,0)*pick([2,2,3]), cost=Math.round(quote*(0.5+R()*0.25));
+    const cl=pick(clients), jid='dj'+j;
+    const cstatus=past?pick(['','approved','approved','declined']):pick(['','approved']);
+    jobs.push({id:jid,number:'JOB-'+(1000+j),title:jt[0]+' - '+pick(NAMES),client:'',client_id:cl.id,client_status:cstatus,approval_token:'ap'+j,booqable:'',venue:pick(VEN),start:start,end:end,status:status,functions:funcs,call_time:pick(['7:00 AM','9:00 AM','2:00 PM','4:00 PM','']),nearest_hospital:'',weather:'',notes:'',internal_notes:'',notes_at:null,internal_notes_at:null,quote_price:quote,quote_cost:cost,tags:[jt[0]]});
+    const used={};
+    funcs.forEach(f=>{
+      let c,t=0; do{c=pick(crew);t++;}while(used[c.id]&&t<5); used[c.id]=1;
+      const astatus=past?pick(['stopped','started','stopped']):pick(['confirmed','invited']);
+      const ss=past?pick(['confirmed','confirmed','declined','']):pick(['sent','confirmed','']);
+      const a='da'+aid; aid++;
+      assignments.push({id:a,job:jid,func:f.id,crew:c.id,status:astatus,start:start,end:end,cost:f.price-pick([500,1000,1500]),sheet_sent_at:ss?start-rint(1,5)*day:null,sheet_status:ss,confirm_token:'cf'+a});
+      if(past&&chance(0.42)){const tin=start+7*3600000; timesheets.push({id:'dt'+tid,asg:a,in:tin,out:tin+rint(6,12)*3600000,brk:pick([30,45,60]),status:pick(['approved','submitted','open']),notes:'',notes_at:null}); tid++;}
+    });
+  }
+  const avail=[];
+  for(let i=0;i<60;i++){const c=pick(crew), s=now+rint(-30,60)*day; avail.push({id:'dv'+i,crew:c.id,start:s,end:s+pick([1,2,3,7])*day,state:pick(['unavailable','leave','tentative']),note:pick(['Personal','Out of town','Booked elsewhere',''])});}
+  const notifs=[];
+  for(let i=0;i<120;i++){notifs.push({id:'dn'+i,ch:'whatsapp',to:pick(FN)+' '+pick(LN),tmpl:pick(['call_sheet','job_invite','availability_request']),body:'Message '+i,at:now-rint(0,300)*day,status:pick(['sent','queued','confirmed','declined'])});}
   return {crew,jobs,assignments,avail,timesheets,notifs,clients};
 }
 
