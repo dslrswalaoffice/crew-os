@@ -662,8 +662,8 @@ const API = {
     if(!r.ok && !txt) throw new Error('HTTP '+r.status);
     try{ return JSON.parse(txt); }
     catch(e){
-      if(/<html|<!doctype|accounts\.google|sign in/i.test(txt)) throw new Error('Web App returned a sign-in page — set the deployment’s access to “Anyone” and redeploy');
-      throw new Error('Unreadable response from the Web App — redeploy a new version');
+      if(/<html|<!doctype|accounts\.google|sign in/i.test(txt)) throw new Error('The engine returned an unexpected page instead of data — check the engine URL in Settings.');
+      throw new Error('Unreadable response from the engine — please try again.');
     }
   },
   async login(pin){ return this.call({action:'login',pin}); },
@@ -686,12 +686,12 @@ function normalize(d){
   return s;
 }
 function setPill(stt){const el=document.getElementById('liveDot');if(!el)return;
-  if(stt==='live'){el.textContent='● Live';el.className='livepill on';el.title='Connected to Google Sheet — shared & multi-device';}
-  else if(stt==='connecting'){el.textContent='● Connecting…';el.className='livepill off';el.title='Reaching the Sheet…';}
+  if(stt==='live'){el.textContent='● Live';el.className='livepill on';el.title='Connected to your Crew OS engine — shared & multi-device';}
+  else if(stt==='connecting'){el.textContent='● Connecting…';el.className='livepill off';el.title='Reaching the engine…';}
   else {el.textContent='● Offline';el.className='livepill off';el.title='Not connected — changes saved locally only';}
 }
-async function persist(key,row){ save(); if(!API.on())return; try{ await API.post({action:'upsert',table:TABLE[key],row}); setPill('live'); hideNet();}catch(e){ setPill('offline'); showNet('Saved on this device but didn’t reach the Sheet ('+String(e.message||e)+'). It’ll sync once you reconnect.',false); } }
-async function removeRow(key,id){ save(); if(!API.on())return; try{ await API.post({action:'delete',table:TABLE[key],id}); setPill('live'); hideNet();}catch(e){ setPill('offline'); showNet('Delete didn’t reach the Sheet ('+String(e.message||e)+').',false); } }
+async function persist(key,row){ save(); if(!API.on())return; try{ await API.post({action:'upsert',table:TABLE[key],row}); setPill('live'); hideNet();}catch(e){ setPill('offline'); showNet('Saved on this device but didn’t reach the server ('+String(e.message||e)+'). It’ll sync once you reconnect.',false); } }
+async function removeRow(key,id){ save(); if(!API.on())return; try{ await API.post({action:'delete',table:TABLE[key],id}); setPill('live'); hideNet();}catch(e){ setPill('offline'); showNet('Delete didn’t reach the server ('+String(e.message||e)+').',false); } }
 
 /* ===================== PIN LOCK (server-validated) ===================== */
 let pin="";let busy=false;
@@ -756,7 +756,7 @@ function enterDemo(){
   showDemoBanner();
 }
 function exitDemo(){location.href=location.pathname;}
-function showDemoBanner(){let b=document.getElementById('demoBanner');if(b)return;b=document.createElement('div');b.id='demoBanner';b.innerHTML='<span><b>Demo mode</b> — sample data. Explore freely; nothing is saved and your live Sheet is untouched.</span><button onclick="exitDemo()">Exit demo</button>';document.body.appendChild(b);}
+function showDemoBanner(){let b=document.getElementById('demoBanner');if(b)return;b=document.createElement('div');b.id='demoBanner';b.innerHTML='<span><b>Demo mode</b> — sample data. Explore freely; nothing is saved and your live data is untouched.</span><button onclick="exitDemo()">Exit demo</button>';document.body.appendChild(b);}
 function DEMO_SKILLS(){return [
   {id:'sk_dop',name:'DOP',price:12000},{id:'sk_camera_op',name:'Camera Op',price:6000},
   {id:'sk_vision_mixer',name:'Vision Mixer',price:8000},{id:'sk_audio_engineer',name:'Audio Engineer',price:6000},
@@ -1029,7 +1029,7 @@ function tplRoleSummary(t){return (t.roles||[]).map(r=>escH(r.role)+' ×'+(r.qty
 function buildFns(roles){const tpl=window._tplRoles||[];return roles.map((r,i)=>{const t=tpl.find(x=>String(x.role).toLowerCase()===r.toLowerCase());return {id:'f'+Date.now()+i,role:r,qty:(t&&t.qty)||1,price:(t&&t.price!=null)?t.price:3000};});}
 function applyTemplate(tid){window._tplRoles=null;if(!tid)return;const t=jobTemplates().find(x=>x.id===tid);if(!t)return;window._tplRoles=t.roles||[];const el=$('#jRoles');if(el)el.value=(t.roles||[]).map(r=>r.role).join(', ');}
 function persistConfig(cfg,okMsg){APP_CONFIG=cfg;Store.set('crewos_cfg',JSON.stringify(cfg));
-  if(API.on()){API.post({action:'config_set',config:cfg}).then(()=>{setPill('live');toast(okMsg+' & synced')}).catch(()=>{showNet(okMsg+' on device but didn’t sync to the Sheet.',false)});}
+  if(API.on()){API.post({action:'config_set',config:cfg}).then(()=>{setPill('live');toast(okMsg+' & synced')}).catch(()=>{showNet(okMsg+' on device but didn’t sync to the server.',false)});}
   else toast(okMsg+' on this device');}
 function tagChips(tags){return (tags||[]).map(t=>`<span class="tag">${escH(t)}</span>`).join('')}
 /* ---- skills (catalog + per-crew price + assignment cost) ---- */
@@ -1160,7 +1160,7 @@ function renderDash(){
   $('#dashStatus').innerHTML=`<div class="statusbar">
     <span class="rbadge ${rd}" title="${escA(rdSub)}">${rd==='ok'?'✓':rd==='warn'?'!':'●'} ${rdLabel}</span>
     <span class="insight">${ins.slice(0,4).join(' &nbsp;·&nbsp; ')}</span>
-    <span class="syncdot ${API.on()?'on':'off'}" title="${API.on()?'Connected to your Google Sheet':'Working offline — changes save on this device'}">${API.on()?'🟢':'⚪'} ${escH(syncTxt)}</span></div>`;
+    <span class="syncdot ${API.on()?'on':'off'}" title="${API.on()?'Connected to your Crew OS engine':'Working offline — changes save on this device'}">${API.on()?'🟢':'⚪'} ${escH(syncTxt)}</span></div>`;
 
   // ---- confirmation follow-up (chase unconfirmed/declined upcoming call sheets) ----
   const followItems=[...declined.map(a=>({a,kind:'declined'})),...unconf.map(a=>({a,kind:'unconf'}))].sort((x,y)=>x.a.start-y.a.start);
@@ -1707,8 +1707,8 @@ function saveAsTemplate(jobId){const j=byId(state.jobs,jobId);if(!j)return;const
   const cfg=Object.assign({},APP_CONFIG);cfg.jobTemplates=list;closeModal();
   persistConfig(cfg,'Template “'+name+'” saved');}
 function resolveClient(name){if(!name)return'';const ex=state.clients.find(c=>(c.name||'').toLowerCase()===name.toLowerCase());if(ex)return ex.id;const row={id:'cl'+Date.now(),name,company:'',contact:'',phone:'',email:'',tags:[],notes:'',notes_at:null};state.clients.push(row);persist('clients',row);return row.id;}
-function copyApproval(id){const l=approvalLink(byId(state.jobs,id));if(!l||l.indexOf('approve=1')<0){toast('Connect to your Google Sheet first');return}copyText(l);}
-function sendApproval(id){if(!roleGuard())return;const j=byId(state.jobs,id);const l=approvalLink(j);if(!l||l.indexOf('approve=1')<0){toast('Connect to your Google Sheet first');return}j.client_status='sent';renderAll();persist('jobs',j);copyText(l);toast('Awaiting approval — link copied; share it with the client')}
+function copyApproval(id){const l=approvalLink(byId(state.jobs,id));if(!l||l.indexOf('approve=1')<0){toast('Connect to the engine first');return}copyText(l);}
+function sendApproval(id){if(!roleGuard())return;const j=byId(state.jobs,id);const l=approvalLink(j);if(!l||l.indexOf('approve=1')<0){toast('Connect to the engine first');return}j.client_status='sent';renderAll();persist('jobs',j);copyText(l);toast('Awaiting approval — link copied; share it with the client')}
 function delJob(id){if(!roleGuard())return;const j=byId(state.jobs,id);if(!j)return;if(!confirm('Delete “'+j.title+'” and all its crew assignments?'))return;
   const asgIds=state.assignments.filter(a=>a.job===id).map(a=>a.id);
   const tsIds=state.timesheets.filter(t=>asgIds.includes(t.asg)).map(t=>t.id);
@@ -1776,14 +1776,14 @@ function openSettings(tab){
   const cfg=APP_CONFIG||{};const t=cfg.templates||{};
   const TM=[['availability_request','Ask availability (Crew)'],['job_invite','Job invite (Crew)'],['call_sheet','Call sheet (Jobs)'],['shift_confirmed','Shift confirmed'],['schedule_changed','Schedule changed']];
   const body=`<div class="settabs">
-      <button class="settab ${tab==='sheet'?'active':''}" onclick="openSettings('sheet')">Google Sheet</button>
+      <button class="settab ${tab==='sheet'?'active':''}" onclick="openSettings('sheet')">Connection</button>
       <button class="settab ${tab==='skills'?'active':''}" onclick="openSettings('skills')">Skills</button>
       <button class="settab ${tab==='templates'?'active':''}" onclick="openSettings('templates')">Templates</button>
       ${ROLE==='owner'?`<button class="settab ${tab==='users'?'active':''}" onclick="openSettings('users')">Users</button>`:''}
       <button class="settab ${tab==='aisensy'?'active':''}" onclick="openSettings('aisensy')">AiSensy</button>
     </div>`+(tab==='sheet'?`
-    <div class="field"><label>Apps Script Web App URL</label><input id="setApi" value="${escA(cur)}" placeholder="https://script.google.com/macros/s/…/exec"></div>
-    <div class="hint">Paste the <b>/exec</b> URL from Apps Script (Deploy → Manage deployments). Stored on this device, so re-uploading the page won’t wipe it.<br>Status now: <b>${API.on()?'Connected':'Offline'}</b></div>`:tab==='skills'?`
+    <div class="field"><label>Crew OS engine URL</label><input id="setApi" value="${escA(cur)}" placeholder="https://crewos-api.vercel.app/api"></div>
+    <div class="hint">This is your Crew OS engine address (Vercel + Neon). It’s already built into the app, so you normally don’t need to touch this. Only change it if you move the engine to a new address. Any value set here is stored on this device and overrides the built-in one.<br>Status now: <b>${API.on()?'Connected':'Offline'}</b></div>`:tab==='skills'?`
     <div class="field"><label>Skills &amp; default day price (₹)</label>
       <div id="skillCat">${(catSkills().length?catSkills():[null]).map(s=>skillCatRow(s)).join('')}</div>
       <button class="btn sec sm" style="margin-top:8px" onclick="addSkillRow()">+ Add skill</button></div>
@@ -1792,14 +1792,14 @@ function openSettings(tab){
       <div id="tplList">${tplListRows()}</div></div>
     <div class="hint">Templates pre-fill a new job’s roles (with quantities &amp; day prices) so you can quote a repeat job type in seconds. Rename or remove here; <b>create a new one with the 📑 button on any job card</b>. When none are saved, a starter set (concert, wedding, corporate, studio) is shown automatically.</div>`:tab==='users'?`
     <div class="field"><label>People &amp; access</label>
-      <div id="userList"><div class="hint">${API.on()?'Loading users…':'Connect to your Google Sheet first to manage users.'}</div></div>
+      <div id="userList"><div class="hint">${API.on()?'Loading users…':'Connect to the engine first to manage users.'}</div></div>
       ${API.on()?`<button class="btn sec sm" style="margin-top:8px" onclick="addUserRow()">+ Add person</button>`:''}</div>
     <div class="hint"><b>Owner</b> — everything incl. settings &amp; money. <b>Manager</b> — all operations, no settings/money-config. <b>Coordinator</b> — schedule/jobs/crew/call sheets, <b>no prices or margins</b>. <b>Viewer</b> — read-only. Each person logs in with their own PIN. Keep at least one Owner. PINs are stored server-side and only shown to you, the owner.</div>`:`
     <div class="field"><label>AiSensy API endpoint</label><input id="aiEndpoint" value="${escA(cfg.endpoint||'https://backend.aisensy.com/campaign/t1/api/v2')}"></div>
     <div class="field"><label>Sender / WhatsApp number (optional)</label><input id="aiSender" value="${escA(cfg.sender||'')}" placeholder="+91…"></div>
     <div class="field"><label>Template / campaign name per action</label>
       <div class="tmplgrid">${TM.map(([k,lbl])=>`<div class="tmplrow"><span>${lbl}</span><input id="ai_${k}" value="${escA(t[k]||k)}"></div>`).join('')}</div></div>
-    <div class="hint">🔒 Your AiSensy <b>API key stays in Apps Script</b> (server-side) and is never stored here. These names map each portal action to an approved AiSensy template/campaign, and apply across every tab.</div>`);
+    <div class="hint">🔒 Your AiSensy <b>API key stays on the server</b> (Vercel, server-side) and is never stored here. These names map each portal action to an approved AiSensy template/campaign, and apply across every tab.</div>`);
   const foot=tab==='sheet'
     ? `${Store.get('crewos_api')?`<button class="btn sec" style="color:var(--danger)" onclick="clearApi()">Disconnect</button>`:''}<button class="btn sec" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveSettings()">Save &amp; reload</button>`
     : tab==='skills'
@@ -1966,11 +1966,11 @@ async function boot(){
     const msg=String((err&&err.message)||err||'load failed');
     if(msg==='auth'){ setPill('offline'); showNet('Your 12-hour session expired — please enter your PIN again.',false); setTimeout(forceLogout,1600); return; }
     restore(); renderAll(); setPill('offline'); startPoll();   // keep polling so it reconnects on its own
-    showNet('Couldn’t reach your Google Sheet yet ('+msg+'). Showing the last cached copy — it will reconnect automatically, or press Retry.',true);
+    showNet('Couldn’t reach the Crew OS engine yet ('+msg+'). Showing the last cached copy — it will reconnect automatically, or press Retry.',true);
   } else {
     APP_CONFIG=loadLocalConfig();
     restore(); renderAll(); setPill('offline');
-    showNet('Not connected to your Google Sheet — running in offline mode, so nothing will sync. Click Connect and paste your Web App (/exec) URL.',false,true);
+    showNet('Not connected to the Crew OS engine — running in offline mode, so nothing will sync. Click Connect to check the engine URL.',false,true);
   }
 }
 function startPoll(){
